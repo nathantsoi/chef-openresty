@@ -349,8 +349,8 @@ the node's run state is manipulated in a recipe, and the module as a
 recipe should be added to `node['openresty']['modules']`. For
 example:
 
-    node.run_state['openresty_configure_flags'] =
-      node.run_state['openresty_configure_flags'] | ["--with-http_stub_status_module"]
+    node.default['openresty_configure_flags'] =
+      node.default['openresty_configure_flags'] | ["--with-http_stub_status_module"]
 
 The recipe will be included by `recipe[nginx::default]` automatically,
 adding the configure flags. Add any other configuration templates or

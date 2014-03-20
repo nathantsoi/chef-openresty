@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-%w{ fastcgi.conf.default fastcgi_params.default mime.types.default scgi_params.default uwsgi_params.default nginx.conf.default }.each do |conf|
+%w{ fastcgi.conf.default fastcgi_params.default mime.types.default scgi_params.default uwsgi_params.default openresty.conf.default }.each do |conf|
   file "#{node['openresty']['dir']}/#{conf}" do
     action :delete
     backup false

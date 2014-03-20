@@ -21,8 +21,8 @@
 # limitations under the License.
 #
 
-template '/etc/init.d/nginx' do
-  source 'nginx.init.erb'
+template '/etc/init.d/openresty' do
+  source 'openresty.init.erb'
   owner 'root'
   group 'root'
   mode 00755
@@ -33,18 +33,18 @@ template '/etc/init.d/nginx' do
 end
 
 defaults_path = value_for_platform_family(
-  ['rhel','fedora','amazon','scientific'] => '/etc/sysconfig/nginx',
-  'debian' => '/etc/default/nginx'
+  ['rhel','fedora','amazon','scientific'] => '/etc/sysconfig/openresty',
+  'debian' => '/etc/default/openresty'
 )
 
 template defaults_path do
-  source 'nginx.sysconfig.erb'
+  source 'openresty.sysconfig.erb'
   owner 'root'
   group 'root'
   mode 00644
 end
 
-service 'nginx' do
+service 'openresty' do
   supports :status => true, :restart => true, :reload => true
   if node['openresty']['auto_enable_start']
     action [ :enable, :start ]

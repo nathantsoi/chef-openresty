@@ -24,7 +24,7 @@
 require 'chef/version_constraint'
 
 kernel_supports_aio = Chef::VersionConstraint.new('>= 2.6.22').include?(node['kernel']['release'].split('-').first)
-restart_after_update = node['openresty']['restart_after_update'] ? ' && $( kill -QUIT `pgrep -U root nginx` || true )' : ''
+restart_after_update = node['openresty']['restart_after_update'] ? ' && $( kill -QUIT `pgrep -U root openresty` || true )' : ''
 
 include_recipe 'build-essential'
 
@@ -52,16 +52,16 @@ remote_file node['openresty']['source']['url'] do
   backup false
 end
 
-cookbook_file "#{Chef::Config['file_cache_path']}/nginx-rate-limit-correct-error-code.patch" do
-  source 'nginx-rate-limit-correct-error-code.patch'
+cookbook_file "#{Chef::Config['file_cache_path']}/openresty-rate-limit-correct-error-code.patch" do
+  source 'openresty-rate-limit-correct-error-code.patch'
   owner 'root'
   group 'root'
   mode 00644
   only_if { node['openresty']['source']['limit_code_patch'] }
 end
 
-node.run_state['openresty_force_recompile'] = false
-node.run_state['openresty_configure_flags'] = node['openresty']['source']['default_configure_flags'] | node['openresty']['configure_flags']
+node.default['openresty_force_recompile'] = false
+node.default['openresty_configure_flags'] = node['openresty']['source']['default_configure_flags'] | node['openresty']['configure_flags']
 
 # Custom PCRE
 if node['openresty']['custom_pcre']
@@ -81,7 +81,7 @@ if node['openresty']['custom_pcre']
     command "tar xjf #{pcre_path}.tar.bz2"
     not_if { ::File.directory?(pcre_path) }
   end
-  node.run_state['openresty_configure_flags'] |= [ "--with-pcre=#{pcre_path}", '--with-pcre-jit' ]
+  node.default['openresty_configure_flags'] |= [ "--with-pcre=#{pcre_path}", '--with-pcre-jit' ]
 else
   pcre_opts = ''
   value_for_platform_family(
@@ -90,20 +90,20 @@ else
   ).each do |pkg|
     package pkg
   end
-  node.run_state['openresty_configure_flags'] |= [ '--with-pcre' ]
+  node.default['openresty_configure_flags'] |= [ '--with-pcre' ]
 end
 
 # System flags
-node.run_state['openresty_configure_flags'] |= [ '--with-file-aio', '--with-libatomic' ]  if kernel_supports_aio
-node.run_state['openresty_configure_flags'] |= [ '--with-ipv6' ]                          if node['openresty']['ipv6']
+node.default['openresty_configure_flags'] |= [ '--with-file-aio', '--with-libatomic' ]  if kernel_supports_aio
+node.default['openresty_configure_flags'] |= [ '--with-ipv6' ]                          if node['openresty']['ipv6']
 
 # OpenResty extra modules
-node.run_state['openresty_configure_flags'] |= [ '--with-luajit' ]                        if node['openresty']['or_modules']['luajit']
-node.run_state['openresty_configure_flags'] |= [ '--with-http_iconv_module' ]             if node['openresty']['or_modules']['iconv']
+node.default['openresty_configure_flags'] |= [ '--with-luajit' ]                        if node['openresty']['or_modules']['luajit']
+node.default['openresty_configure_flags'] |= [ '--with-http_iconv_module' ]             if node['openresty']['or_modules']['iconv']
 
 if node['openresty']['or_modules']['postgres']
   include_recipe 'postgresql::client'
-  node.run_state['openresty_configure_flags'] |= [ '--with-http_postgres_module' ]
+  node.default['openresty_configure_flags'] |= [ '--with-http_postgres_module' ]
 end
 
 if node['openresty']['or_modules']['drizzle']
@@ -112,7 +112,7 @@ if node['openresty']['or_modules']['drizzle']
     'debian' => 'libdrizzle-dev'
   )
   package drizzle
-  node.run_state['openresty_configure_flags'] |= [ '--with-http_drizzle_module' ]
+  node.default['openresty_configure_flags'] |= [ '--with-http_drizzle_module' ]
 end
 
 node['openresty']['modules'].each do |ngx_module|
@@ -123,15 +123,15 @@ node['openresty']['extra_modules'].each do |ngx_module|
   include_recipe ngx_module
 end
 
-configure_flags = node.run_state['openresty_configure_flags']
-openresty_force_recompile = node.run_state['openresty_force_recompile']
+configure_flags = node.default['openresty_configure_flags']
+openresty_force_recompile = node.default['openresty_force_recompile']
 
 # The 3 first version numbers of OpenResty is the actual NGINX version. It's a bit ugly but it works...
-nginx_version = node['openresty']['source']['version'].split('.')[0...-1].join('.')
+openresty_version = node['openresty']['source']['version'].split('.')[0...-1].join('.')
 if node['openresty']['source']['limit_code_patch']
   limit_code_patch = <<-EOT
-  cd bundle/nginx-#{nginx_version} &&
-  patch -p1 < #{Chef::Config['file_cache_path']}/nginx-rate-limit-correct-error-code.patch &&
+  cd bundle/nginx-#{openresty_version} &&
+  patch -p1 < #{Chef::Config['file_cache_path']}/openresty-rate-limit-correct-error-code.patch &&
   cd ../../ &&
   EOT
 else
@@ -150,7 +150,7 @@ bash 'compile_openresty_source' do
     cd ngx_openresty-#{node['openresty']['source']['version']} &&
     #{limit_code_patch}
     #{pcre_opts}
-    ./configure #{node.run_state['openresty_configure_flags'].join(' ')} &&
+    ./configure #{node.default['openresty_configure_flags'].join(' ')} &&
     make -j#{node['cpu']['total']} && make install #{restart_after_update}
   EOH
 
@@ -158,10 +158,10 @@ bash 'compile_openresty_source' do
   if Chef::Config[:solo]
     not_if do
       openresty_force_recompile == false &&
-        node.automatic_attrs['nginx'] &&
-        node.automatic_attrs['nginx']['version'] == node['openresty']['source']['version'] &&
+        node.automatic_attrs['openresty'] &&
+        node.automatic_attrs['openresty']['version'] == node['openresty']['source']['version'] &&
         (configure_flags.reject{ |f| f =~ /with-http_(drizzle|iconv|postgres)_module/ } &
-          node.automatic_attrs['nginx']['configure_arguments'].
+          node.automatic_attrs['openresty']['configure_arguments'].
           reject{ |f| f =~ /(--add-module=\.\.\/)/ }.
           map{ |f| f =~ /luajit/ ? '--with-luajit' : f }.
           sort).size == configure_flags.reject{ |f| f =~ /with-http_(drizzle|iconv|postgres)_module/ }.size
@@ -169,8 +169,8 @@ bash 'compile_openresty_source' do
   else
     not_if do
       openresty_force_recompile == false &&
-        node.automatic_attrs['nginx'] &&
-        node.automatic_attrs['nginx']['version'] == node['openresty']['source']['version'] &&
+        node.automatic_attrs['openresty'] &&
+        node.automatic_attrs['openresty']['version'] == node['openresty']['source']['version'] &&
         node['openresty']['persisted_configure_flags'] &&
         node['openresty']['persisted_configure_flags'].sort == configure_flags.sort
     end
@@ -179,5 +179,5 @@ bash 'compile_openresty_source' do
   notifies :create, 'ruby_block[persist-openresty-configure-flags]'
 end
 
-node.run_state.delete('openresty_configure_flags')
-node.run_state.delete('openresty_force_recompile')
+node.default.delete('openresty_configure_flags')
+node.default.delete('openresty_force_recompile')

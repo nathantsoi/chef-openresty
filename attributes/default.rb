@@ -19,7 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 # Download data
 default['openresty']['source']['version']   = '1.2.8.1'
 default['openresty']['source']['url']       = "http://agentzh.org/misc/nginx/ngx_openresty-#{node['openresty']['source']['version']}.tar.gz"
@@ -30,15 +29,15 @@ default['openresty']['source']['checksum']  = '741b64ebd108938a2265a9df8c93c9e1b
 default['openresty']['source']['limit_code_patch'] = true
 
 # Directories
-default['openresty']['dir']                 = '/etc/nginx'
-default['openresty']['log_dir']             = '/var/log/nginx'
-default['openresty']['cache_dir']           = '/var/cache/nginx'
-default['openresty']['run_dir']             = '/var/run'
-default['openresty']['binary']              = '/usr/sbin/nginx'
-default['openresty']['pid']                 = "#{node['openresty']['run_dir']}/nginx.pid"
+default['openresty']['dir']                 = '/opt/openresty'
+default['openresty']['log_dir']             = "#{node['openresty']['dir']}/log"
+default['openresty']['cache_dir']           = "#{node['openresty']['dir']}/cache"
+default['openresty']['run_dir']             = "#{node['openresty']['dir']}/log"
+default['openresty']['binary']              = "#{node['openresty']['dir']}/sbin/nginx"
+default['openresty']['pid']                 = "#{node['openresty']['run_dir']}/openresty.pid"
 
 # Namespaced attributes in order not to clash with the OHAI plugin
-default['openresty']['source']['conf_path'] = "#{node['openresty']['dir']}/nginx.conf"
+default['openresty']['source']['conf_path'] = "#{node['openresty']['dir']}/openresty.conf"
 default['openresty']['source']['prefix']    = '/usr/share'
 
 # Configure flags
@@ -49,7 +48,7 @@ default['openresty']['source']['default_configure_flags'] = [
   "--error-log-path=#{node['openresty']['log_dir']}/error.log",
   "--http-log-path=#{node['openresty']['log_dir']}/access.log",
   "--pid-path=#{node['openresty']['pid']}",
-  "--lock-path=#{node['openresty']['run_dir']}/nginx.lock",
+  "--lock-path=#{node['openresty']['run_dir']}/openresty.lock",
   "--http-client-body-temp-path=#{node['openresty']['cache_dir']}/client_temp",
   "--http-proxy-temp-path=#{node['openresty']['cache_dir']}/proxy_temp",
   "--http-fastcgi-temp-path=#{node['openresty']['cache_dir']}/fastcgi_temp",
@@ -86,7 +85,7 @@ case node['platform_family']
 when 'debian'
   default['openresty']['user']        = 'www-data'
 when 'rhel', 'fedora'
-  default['openresty']['user']        = 'nginx'
+  default['openresty']['user']        = 'openresty'
 else
   default['openresty']['user']        = 'www-data'
 end

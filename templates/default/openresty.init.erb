@@ -1,11 +1,11 @@
 #!/bin/sh
 #
-# nginx
+# openresty
 #
 # chkconfig:   - 57 47
-# description: nginx
-# processname:  nginx
-# config:       /etc/sysconfig/nginx
+# description: openresty
+# processname:  openresty
+# config:       /etc/sysconfig/openresty
 #
 
 # Source function library.
@@ -22,9 +22,9 @@ prog=$(basename $exec)
 # default options, overruled by items in sysconfig
 NGINX_GLOBAL=""
 
-[ -e /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
+[ -e /etc/sysconfig/openresty ] && . /etc/sysconfig/openresty
 
-lockfile=/var/lock/subsys/nginx
+lockfile=/var/lock/subsys/openresty
 
 start() {
     [ -x $exec ] || exit 5
@@ -73,7 +73,7 @@ case "$1" in
         stop
         ;;
   status)
-        status nginx
+        status openresty
         ;;
   restart)
         restart

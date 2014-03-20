@@ -23,12 +23,12 @@
 # The status module can be included in any vhost needed, explicitly, using the include directive
 
 template 'openresty_status' do
-  path "#{node['openresty']['dir']}/conf.d/nginx_status.conf.inc"
-  source 'modules/nginx_status.conf.inc.erb'
+  path "#{node['openresty']['dir']}/conf.d/openresty_status.conf.inc"
+  source 'modules/openresty_status.conf.inc.erb'
   owner 'root'
   group 'root'
   mode 00644
-  notifies :reload, 'service[nginx]'
+  notifies :reload, 'service[openresty]'
 end
 
-node.run_state['openresty_configure_flags'] |= ['--with-http_stub_status_module']
+node.default['openresty_configure_flags'] |= ['--with-http_stub_status_module']

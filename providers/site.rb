@@ -24,7 +24,7 @@ action :enable do
   link_name = (new_resource.name == "default") ? "000-default" : new_resource.name
   a = execute "nxensite #{new_resource.name}" do
     command "/usr/sbin/nxensite #{new_resource.name}"
-    notifies :reload, 'service[nginx]', timing
+    notifies :reload, 'service[openresty]', timing
     not_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{link_name}") }
   end
 
@@ -36,7 +36,7 @@ action :disable do
   link_name = (new_resource.name == "default") ? "000-default" : new_resource.name
   a = execute "nxdissite #{new_resource.name}" do
     command "/usr/sbin/nxdissite #{new_resource.name}"
-    notifies :reload, 'service[nginx]', timing
+    notifies :reload, 'service[openresty]', timing
     only_if { ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/#{link_name}") }
   end
 

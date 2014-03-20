@@ -20,21 +20,21 @@
 # limitations under the License.
 #
 
-ohai 'reload_nginx' do
+ohai 'reload_openresty' do
   action :nothing
-  plugin 'nginx'
+  plugin 'openresty'
 end
 
-template "#{node['ohai']['plugin_path']}/nginx.rb" do
-  source 'plugins/nginx.rb.erb'
+template "#{node['ohai']['plugin_path']}/openresty.rb" do
+  source 'plugins/openresty.rb.erb'
   owner 'root'
   group 'root'
   mode 00755
   variables(
-    :nginx_prefix => node['openresty']['source']['prefix'],
-    :nginx_bin    => node['openresty']['binary']
+    :openresty_prefix => node['openresty']['source']['prefix'],
+    :openresty_bin    => node['openresty']['binary']
   )
-  notifies :reload, 'ohai[reload_nginx]', :immediately
+  notifies :reload, 'ohai[reload_openresty]', :immediately
 end
 
 include_recipe 'ohai'

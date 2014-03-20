@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-node.run_state['openresty_configure_flags'] |= ['--with-http_flv_module']
+node.default['openresty_configure_flags'] |= ['--with-http_flv_module']
