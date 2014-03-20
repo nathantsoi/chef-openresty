@@ -30,4 +30,4 @@ git module_path do
   not_if { ::File.exists?(module_path) }
 end
 
-node.default['openresty_configure_flags'] |= ["--add-module=#{module_path}"]
+node.run_state['openresty_configure_flags'] |= ["--add-module=#{module_path}"]

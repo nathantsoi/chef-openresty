@@ -20,4 +20,4 @@
 # limitations under the License.
 #
 
-node.default['openresty_configure_flags'] |= ['--with-http_ssl_module']
+node.run_state['openresty_configure_flags'] |= ['--with-http_ssl_module']

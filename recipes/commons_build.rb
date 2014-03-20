@@ -73,7 +73,7 @@ if node['openresty']['custom_pcre']
     command "tar xjf #{pcre_path}.tar.bz2"
     not_if { ::File.directory?(pcre_path) }
   end
-  node.default['openresty_configure_flags'] |= [ "--with-pcre=#{pcre_path}", '--with-pcre-jit' ]
+  node.run_state['openresty_configure_flags'] |= [ "--with-pcre=#{pcre_path}", '--with-pcre-jit' ]
 else
   pcre_opts = ''
   value_for_platform_family(
@@ -82,15 +82,15 @@ else
   ).each do |pkg|
     package pkg
   end
-  node.default['openresty_configure_flags'] |= [ '--with-pcre' ]
+  node.run_state['openresty_configure_flags'] |= [ '--with-pcre' ]
 end
 
 # System flags
 node.run_state['openresty_configure_flags'] |= [ '--with-file-aio', '--with-libatomic' ]  if kernel_supports_aio
 
 # OpenResty extra modules
-node.default['openresty_configure_flags'] |= [ '--with-luajit' ]                        if node['openresty']['or_modules']['luajit']
-node.default['openresty_configure_flags'] |= [ '--with-http_iconv_module' ]             if node['openresty']['or_modules']['iconv']
+node.run_state['openresty_configure_flags'] |= [ '--with-luajit' ]                        if node['openresty']['or_modules']['luajit']
+node.run_state['openresty_configure_flags'] |= [ '--with-http_iconv_module' ]             if node['openresty']['or_modules']['iconv']
 
 # Jemalloc
 if node['openresty']['link_to_jemalloc']
@@ -100,7 +100,7 @@ end
 
 if node['openresty']['or_modules']['postgres']
   include_recipe 'postgresql::client'
-  node.default['openresty_configure_flags'] |= [ '--with-http_postgres_module' ]
+  node.run_state['openresty_configure_flags'] |= [ '--with-http_postgres_module' ]
 end
 
 if node['openresty']['or_modules']['drizzle']
@@ -109,7 +109,7 @@ if node['openresty']['or_modules']['drizzle']
     'debian' => 'libdrizzle-dev'
   )
   package drizzle
-  node.default['openresty_configure_flags'] |= [ '--with-http_drizzle_module' ]
+  node.run_state['openresty_configure_flags'] |= [ '--with-http_drizzle_module' ]
 end
 
 node['openresty']['modules'].each do |ngx_module|
@@ -120,7 +120,7 @@ node['openresty']['extra_modules'].each do |ngx_module|
   include_recipe ngx_module
 end
 
-configure_flags = node.default['openresty_configure_flags']
+configure_flags = node.run_state['openresty_configure_flags']
 openresty_force_recompile = node.default['openresty_force_recompile']
 
 ruby_block 'persist-openresty-configure-flags' do

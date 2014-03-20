@@ -23,7 +23,7 @@
 # Service recipe for inclusion (can be extra-cookbook)
 default['openresty']['service']['recipe']             = 'openresty::service_init'
 # Service resource handler - used for notifications
-default['openresty']['service']['resource']           = 'service[nginx]'
+default['openresty']['service']['resource']           = 'service[openresty]'
 # Restart automatically after version update
 default['openresty']['service']['restart_on_update']  = true
 # Start on system boot

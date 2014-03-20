@@ -43,4 +43,4 @@ bash 'extract_upload_progress_module' do
   not_if { ::File.exists?(upm_extract_path) }
 end
 
-node.default['openresty_configure_flags'] |= ["--add-module=#{upm_extract_path}"]
+node.run_state['openresty_configure_flags'] |= ["--add-module=#{upm_extract_path}"]

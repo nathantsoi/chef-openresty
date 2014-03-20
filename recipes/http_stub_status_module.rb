@@ -33,4 +33,4 @@ template 'openresty_status' do
   end
 end
 
-node.default['openresty_configure_flags'] |= ['--with-http_stub_status_module']
+node.run_state['openresty_configure_flags'] |= ['--with-http_stub_status_module']

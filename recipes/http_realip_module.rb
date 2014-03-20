@@ -37,4 +37,4 @@ template "#{node['openresty']['dir']}/conf.d/http_realip.conf" do
   end
 end
 
-node.default['openresty_configure_flags'] |= ['--with-http_realip_module']
+node.run_state['openresty_configure_flags'] |= ['--with-http_realip_module']

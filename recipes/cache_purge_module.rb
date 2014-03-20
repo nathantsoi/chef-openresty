@@ -42,4 +42,4 @@ bash 'extract_cache_purge_module' do
   not_if { ::File.exists?(cpm_extract_path) }
 end
 
-node.default['openresty_configure_flags'] |= ["--add-module=#{cpm_extract_path}"]
+node.run_state['openresty_configure_flags'] |= ["--add-module=#{cpm_extract_path}"]
