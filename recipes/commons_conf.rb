@@ -24,7 +24,7 @@ require 'chef/version_constraint'
 
 kernel_supports_aio = Chef::VersionConstraint.new('>= 2.6.22').include?(node['kernel']['release'].split('-').first)
 
-if node['openresty']['worker_auto_affinity']
+if node['openresty']['worker_auto_affinity'] && node['openresty']['worker_processes'] != 'auto'
 
   affinity_mask = Array.new
   cpupos = 0
@@ -46,7 +46,9 @@ template 'openresty.conf' do
   group 'root'
   mode 00644
   variables :kernel_supports_aio => kernel_supports_aio
-  notifies :reload, 'service[openresty]'
+  if node['openresty']['service']['start_on_boot']
+    notifies :reload, node['openresty']['service']['resource']
+  end
 end
 
 cookbook_file "#{node['openresty']['dir']}/mime.types" do
@@ -54,11 +56,13 @@ cookbook_file "#{node['openresty']['dir']}/mime.types" do
   owner 'root'
   group 'root'
   mode 00644
-  notifies :reload, 'service[openresty]'
+  if node['openresty']['service']['start_on_boot']
+    notifies :reload, node['openresty']['service']['resource']
+  end
 end
 
-cookbook_file "#{node['openresty']['dir']}/conf.d/general_security.inc" do
-  source 'general_security.inc'
+cookbook_file "#{node['openresty']['dir']}/conf.d/general_security.conf.inc" do
+  source 'general_security.conf.inc'
   owner 'root'
   group 'root'
   mode 00644
@@ -70,8 +74,8 @@ if node['openresty']['default_site_enabled']
     owner 'root'
     group 'root'
     mode 00644
-    if ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/000-default")
-      notifies :reload, 'service[openresty]'
+    if node['openresty']['service']['start_on_boot'] && ::File.symlink?("#{node['openresty']['dir']}/sites-enabled/000-default")
+      notifies :reload, node['openresty']['service']['resource']
     end
   end
 

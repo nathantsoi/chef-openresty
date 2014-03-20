@@ -20,13 +20,9 @@
 # limitations under the License.
 #
 # Download data
-default['openresty']['source']['version']   = '1.2.8.1'
+default['openresty']['source']['version']   = '1.5.8.1'
 default['openresty']['source']['url']       = "http://agentzh.org/misc/nginx/ngx_openresty-#{node['openresty']['source']['version']}.tar.gz"
-default['openresty']['source']['checksum']  = '741b64ebd108938a2265a9df8c93c9e1be6a790c4f70290fca4560a90f51c44d'
-
-# Apply the 503 -> 429 error code patch
-# Blows the "I rate limit" cover but some folks need it!
-default['openresty']['source']['limit_code_patch'] = true
+default['openresty']['source']['checksum']  = '96ec68efb1ecd83a3b4871d1051505d858d13cb866f6be644b8f60ed9397fbc2'
 
 # Directories
 default['openresty']['dir']                 = '/opt/openresty'
@@ -54,6 +50,7 @@ default['openresty']['source']['default_configure_flags'] = [
   "--http-fastcgi-temp-path=#{node['openresty']['cache_dir']}/fastcgi_temp",
   "--http-uwsgi-temp-path=#{node['openresty']['cache_dir']}/uwsgi_temp",
   "--http-scgi-temp-path=#{node['openresty']['cache_dir']}/scgi_temp",
+  '--with-ipv6',
   '--with-md5-asm',
   '--with-sha1-asm',
   '--without-http_ssi_module',
@@ -158,10 +155,7 @@ default['openresty']['logrotate']                     = true
 default['openresty']['disable_access_log']            = true
 # Enable the default sample vhost config
 default['openresty']['default_site_enabled']          = false
-# Restart automatically after version update
-default['openresty']['restart_after_update']          = true
 # Enable custom PCRE installation - useful for JIT.
 default['openresty']['custom_pcre']                   = true
-# Disable automatic activation of the bundled init service - useful if you are using alternative
-# service monitoring daemons (runit, upstart etc)
-default['openresty']['auto_enable_start']             = true
+# Enable jemalloc linking
+default['openresty']['link_to_jemalloc']              = false

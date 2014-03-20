@@ -23,6 +23,11 @@
 node.override['openresty']['or_modules']['luajit'] = true
 include_recipe 'openresty'
 
+# Install needed packages
+%w{ zip unzip }.each do |pkg|
+  package pkg
+end
+
 src_basename  = ::File.basename(node['openresty']['luarocks']['url'])
 src_filepath  = Chef::Config['file_cache_path'] || '/tmp'
 src_filename  = ::File.basename(src_basename, '.tar.gz')
@@ -46,8 +51,8 @@ bash 'compile-openresty-luarocks' do
   ./configure --prefix=#{node['openresty']['source']['prefix']}/luajit \\
       --with-lua=#{node['openresty']['source']['prefix']}/luajit \\
       --lua-suffix=jit \\
-      --with-lua-include=#{node['openresty']['source']['prefix']}/luajit/include/luajit-2.0 && \\
-      make
+      --with-lua-include=#{node['openresty']['source']['prefix']}/luajit/include/luajit-2.1 && \\
+      make build
   EOT
   creates "#{src_filepath}/#{src_filename}/built"
   action :run

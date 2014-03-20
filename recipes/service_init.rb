@@ -46,7 +46,7 @@ end
 
 service 'openresty' do
   supports :status => true, :restart => true, :reload => true
-  if node['openresty']['auto_enable_start']
+  if node['openresty']['service']['start_on_boot']
     action [ :enable, :start ]
   end
 end

@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: openresty
-# Recipe:: http_realip_module
+# Attribute:: service
 #
 # Author:: Panagiotis Papadomitsos (<pj@ezgr.net>)
 #
@@ -20,21 +20,11 @@
 # limitations under the License.
 #
 
-# Documentation: http://wiki.nginx.org/HttpRealIpModule
-
-template "#{node['openresty']['dir']}/conf.d/http_realip.conf" do
-  source 'modules/http_realip.conf.erb'
-  owner 'root'
-  group 'root'
-  mode 00644
-  variables(
-    :addresses => node['openresty']['realip']['addresses'],
-    :header => node['openresty']['realip']['header']
-  )
-
-  if node['openresty']['service']['start_on_boot']
-    notifies :reload, node['openresty']['service']['resource']
-  end
-end
-
-node.default['openresty_configure_flags'] |= ['--with-http_realip_module']
+# Service recipe for inclusion (can be extra-cookbook)
+default['openresty']['service']['recipe']             = 'openresty::service_init'
+# Service resource handler - used for notifications
+default['openresty']['service']['resource']           = 'service[nginx]'
+# Restart automatically after version update
+default['openresty']['service']['restart_on_update']  = true
+# Start on system boot
+default['openresty']['service']['start_on_boot']      = true

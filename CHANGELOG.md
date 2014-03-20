@@ -1,14 +1,36 @@
-## 0.1.10:
+## 0.3.2:
 
-- OpenResty version bump
-- Added automatic creation of /var/cache/nginx/{fastcgi,scgi,uwsgi,proxy}_cache
+* OpenResty version bump (LuaJIT 2.1!)
+* PCRE version bump
+* FIX: zip package dependency installation (#11)
+* FIX: luarocks installation (#12)
+* FIX: onditionally notify service on service changes (#13)
+* FIX: PCRE URL to fix Chef redirect limit
+
+## 0.3.1:
+
+* Version bumps to multiple addons and OpenResty
+
+## 0.3.0:
+
+* OpenResty major version bump to 1.4-based NGINX
+* Removed rate limit response code patch (since this is supported natively now)
+* Promoted IPv6 support to standard configure flags
+
+## 0.2.0:
+
+* Added support for dynamic service definitions (i.e. runit, monit etc)
+* OpenResty version bump
+* Added automatic creation of /var/cache/nginx/{fastcgi,scgi,uwsgi,proxy}_cache
+* Added support for linking with jemalloc. May provide some benefits when used in serving LUA
+* Minor file naming fix
 
 ## 0.1.9:
 
 * Fixed a bug in service restart
 * Added flag for the control of the automatic activation of the bundled init script
 * Refactored the build+install recipes (thanks @sdelano!)
-* Altered the configure flags detection algorithm from consulting the OHAI plugin to 
+* Altered the configure flags detection algorithm from consulting the OHAI plugin to
   consulting a set node attribute, which is more consistent and less error prone (thanks @sdelano!)
 * Various fixes to the nxensite/nxdissite scripts (thanks @sdelano!)
 * Fixed a bug where disabling the default site would not skip installing the `default` file in sites-enabled
