@@ -71,7 +71,7 @@ DAEMON=<%= node['openresty']['binary'] %>
 PS="openresty"
 PIDNAME="openresty"                     #lets you do $PS-slave
 PIDFILE=$PIDNAME.pid                #pid file
-PIDSPATH=/var/run
+PIDSPATH=<%= node['openresty']['log_dir'] %>
 
 DESCRIPTION="Openresty Server..."
 
