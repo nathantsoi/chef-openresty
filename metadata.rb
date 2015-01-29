@@ -1,6 +1,6 @@
 name              'openresty'
-maintainer        'Panagiotis Papadomitsos'
-maintainer_email  'pj@ezgr.net'
+maintainer        'Nathan Tsoi'
+maintainer_email  'nathan@vertile.com'
 license           'Apache 2.0'
 description       'Installs and configures the OpenResty NGINX bundle'
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md')).chomp
