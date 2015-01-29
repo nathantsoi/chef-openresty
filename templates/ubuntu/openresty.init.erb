@@ -83,6 +83,7 @@ TRUE=1                              #boolean
 FALSE=0                             #boolean
 
 lockfile=/var/lock/subsys/openresty
+NGINX_PREFIX="<%= node['openresty']['source']['prefix'] %>"
 NGINX_CONF_FILE="<%= node['openresty']['source']['conf_path'] %>"
 
 #------------------------------------------------------------------------------
@@ -111,7 +112,7 @@ setFilePerms(){
 }
 
 configtest() {
-    $DAEMON -t -c $NGINX_CONF_FILE
+    $DAEMON -t -p $NGINX_PREFIX -c $NGINX_CONF_FILE
 }
 
 getPSCount() {
@@ -201,7 +202,7 @@ start() {
     else
         start-stop-daemon --start --quiet --chuid \
         $RUNAS --pidfile $PIDSPATH/$PIDFILE --exec $DAEMON \
-        -- -c $NGINX_CONF_FILE
+        -- -p $NGINX_PREFIX -c $NGINX_CONF_FILE
         setFilePerms
         log_end_msg $SCRIPT_OK
     fi
