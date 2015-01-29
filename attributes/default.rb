@@ -153,6 +153,8 @@ default['openresty']['open_file_cache'] = {
 default['openresty']['logrotate']                     = true
 # Disable general access logging - useful for large scale sites
 default['openresty']['disable_access_log']            = true
+# Enable the default sample openresty.conf (nginx.conf equivalent)
+default['openresty']['default_config_enabled']          = false
 # Enable the default sample vhost config
 default['openresty']['default_site_enabled']          = false
 # Enable custom PCRE installation - useful for JIT.

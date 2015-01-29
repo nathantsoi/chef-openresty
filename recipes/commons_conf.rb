@@ -39,15 +39,17 @@ if node['openresty']['worker_auto_affinity'] && node['openresty']['worker_proces
   node.default['openresty']['worker_cpu_affinity'] = affinity_mask.join(' ')
 end
 
-template 'openresty.conf' do
-  path "#{node['openresty']['dir']}/openresty.conf"
-  source 'openresty.conf.erb'
-  owner 'root'
-  group 'root'
-  mode 00644
-  variables :kernel_supports_aio => kernel_supports_aio
-  if node['openresty']['service']['start_on_boot']
-    notifies :reload, node['openresty']['service']['resource']
+if node['openresty']['default_config_enabled']
+  template 'openresty.conf' do
+    path "#{node['openresty']['dir']}/openresty.conf"
+    source 'openresty.conf.erb'
+    owner 'root'
+    group 'root'
+    mode 00644
+    variables :kernel_supports_aio => kernel_supports_aio
+    if node['openresty']['service']['start_on_boot']
+      notifies :reload, node['openresty']['service']['resource']
+    end
   end
 end
 

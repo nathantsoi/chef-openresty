@@ -200,6 +200,8 @@ Generally used attributes. Some have platform specific values. See
 * `node['openresty']['disable_access_log']` - set to true to disable the
   general access log, may be useful on high traffic sites.
 
+* `node['openresty']['default_config_enabled']` - enable the default openresty.conf (nginx.conf equivalent), disable to manage your own config
+
 * `node['openresty']['default_site_enabled']` - enable the default site
 
 * `node['openresty']['custom_pcre']` - Se to true to download and use a custom
