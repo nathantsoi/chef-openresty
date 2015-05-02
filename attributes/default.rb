@@ -20,9 +20,9 @@
 # limitations under the License.
 #
 # Download data
-default['openresty']['source']['version']   = '1.7.7.1'
-default['openresty']['source']['url']       = "http://agentzh.org/misc/nginx/ngx_openresty-#{node['openresty']['source']['version']}.tar.gz"
-default['openresty']['source']['checksum']  = 'e00b038945ca198eca7424026ccade0f8a5ad95b8aa40c5c2961684fc50ca4d4'
+default['openresty']['source']['version']   = '1.7.10.1'
+default['openresty']['source']['url']       = "http://openresty.org/download/ngx_openresty-#{node['openresty']['source']['version']}.tar.gz"
+default['openresty']['source']['checksum']  = '4fd0d73e5955319cee51c6fa574e254be4538a63ae3e673c35eacdf9d4bce679'
 
 # Directories
 default['openresty']['dir']                 = '/opt/openresty'
