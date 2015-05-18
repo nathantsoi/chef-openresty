@@ -121,7 +121,7 @@ node['openresty']['extra_modules'].each do |ngx_module|
 end
 
 configure_flags = node.run_state['openresty_configure_flags']
-openresty_force_recompile = node.default['openresty_force_recompile']
+openresty_force_recompile = node.run_state['openresty_force_recompile']
 
 ruby_block 'persist-openresty-configure-flags' do
   block do
@@ -148,8 +148,8 @@ bash 'compile_openresty_source' do
   if Chef::Config[:solo]
     not_if do
       openresty_force_recompile == false &&
-        node.automatic_attrs['nginx'] &&
-        node.automatic_attrs['nginx']['version'] == node['openresty']['source']['version'] &&
+        node.automatic_attrs['openresty'] &&
+        node.automatic_attrs['openresty']['version'] == node['openresty']['source']['version'] &&
         (::File.read(::File.join(::File.dirname(src_filepath), 'openresty.configure-opts')) || '' rescue '') ==
         configure_flags.sort.uniq.join("\n")
     end
